@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"
+            integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
+            integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+<body>
+<!--Modal edit-->
+<div class="modal fade" id="exampleEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalEdit">Edit city</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <input type="hidden" id="id_event">
+                        <label for="name" class="col-form-label">City:</label>
+                        <input type="text" class="form-control" id="name_city">
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Country:</label>
+                        <select class="form-select" aria-label="Default select example" id="list_country">
+                            <th:block th:each="p: ${listCountry}">
+                                <option th:value="${p.getName()}" th:text="${p.name}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">acreage:</label><br>
+                        <input type="text" id="acreageS" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="population" class="col-form-label">population:</label>
+                        <input type="text" class="form-control" id="populationS">
+                    </div>
+                    <div class="mb-3">
+                        <label for="gpa" class="col-form-label">GPA:</label>
+                        <input type="text" class="form-control" id="gpaS">
+                    </div>
+                    <div class="mb-3">
+                        <label for="note-event" class="col-form-label">Note:</label>
+                        <input type="text" class="form-control" id="note-eventS">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="edit()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal create-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create city</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="name" class="col-form-label">City:</label>
+                        <input type="text" class="form-control" id="name-city">
+                        <div id="name-message"></div>
+                    </div>
+                    <div class="mb-3">
+                        <!--                        List country-->
+                        <label class="col-form-label">Country:</label>
+                        <select class="form-select" aria-label="Default select example" id="list-country">
+                            <th:block th:each="p: ${listCountry}">
+                                <option th:value="${p.getName()}" th:text="${p.name}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">acreage:</label><br>
+                        <input type="text" id="acreage" class="form-control">
+                        <div id="acreage-message"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="population" class="col-form-label">population:</label>
+                        <input type="text" class="form-control" id="population">
+                        <div id="population-message"></div>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="gpa" class="col-form-label">GPA:</label>
+                        <input type="text" class="form-control" id="gpa">
+                        <div id="gpa-message"></div>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="note-event" class="col-form-label">Note:</label>
+                        <input type="text" class="form-control" id="note-event">
+                        <div id="note-message"></div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="update()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Table show-->
+<div style="margin-top: 20px">
+    <div class="row p-3 mr-1 form-group">
+        <label for="name" class="col-md-1 col-form-label text-right">Name city</label>
+        <input class="form-control1 col-md-2" id="name" name="name">
+    </div>
+</div>
+<div style="margin-left: 100px">
+    <button type="button" class="btn btn-primary mr-3" onclick="search()">Search</button>
+</div>
+<div class="row p-3 mr-1 form-group" style="margin-top:20px">
+    <div class="col-md-2"></div>
+    <button type="button" class="btn btn-primary form-control1 col-md-2" data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+            data-bs-whatever="@mdo" onclick="clears()">Create new city
+    </button>
+</div>
+<div class="p-3">
+    <h1 style="text-align:center; font-style: oblique; color: #ac2925">List city</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">STT</th>
+            <th scope="col">City</th>
+            <th scope="col">Country</th>
+            <th scope="col">Acreage</th>
+            <th scope="col">population</th>
+            <th scope="col">GPA</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody id="table-event">
+
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+    search();
+
+    function search() {
+        const event = {
+            name: document.getElementById("name").value,
+        }
+        $.ajax('http://localhost:8080/show',
+            {
+                dataType: 'json',
+                timeout: 500,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(event),
+                success: loadTables,
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log(jqXhr)
+                }
+            });
+    }
+
+    function loadTables(data) {
+        const row = document.getElementById("table-event");
+        let html = "";
+        let index = 0;
+        data.forEach(val => {
+            index++;
+            html += `<tr><td><input type="hidden" value="${val.id}"></td><td>${index}</td><td>${val.name}</td><td>${val.country}</td><td>${val.acreage}</td><td>${val.population}</td><td>${val.gpa}</td><td><input type="hidden" value="${val.note}">
+<td><button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleEdit" onclick="setValue('${val.id}','${val.name}','${val.country}','${val.acreage}','${val.population}','${val.gpa}','${val.note}')">Edit</button></td>
+<td><button type="button" class="btn btn-warning" onclick="remove('${val.id}')">Delete</button></td></tr>`
+        })
+        row.innerHTML = html;
+    }
+
+    function clears() {
+        document.getElementById("name-city").value = "";
+        document.getElementById("acreage").value = "";
+        document.getElementById("population").value = "";
+        document.getElementById("gpa").value = "";
+        document.getElementById("note-event").value = "";
+        document.getElementById("name-message").innerHTML = "";
+        document.getElementById("acreage-message").innerHTML = "";
+        document.getElementById("population-message").innerHTML ="";
+        document.getElementById("gpa-message").innerHTML ="";
+        document.getElementById("note-message").innerHTML ="";
+    }
+
+    function update() {
+        if(document.getElementById("name-city").value === ""){
+            document.getElementById("name-message").innerHTML = `<p style="color:red; font-style: oblique">Chưa điền tên</p>`;
+            return;
+        }
+        if(document.getElementById("acreage").value === ""){
+            document.getElementById("acreage-message").innerHTML = `<p style="color:red; font-style: oblique">Chưa diền arceage</p>`;
+            return;
+        }
+        if(document.getElementById("population").value === ""){
+            document.getElementById("population-message").innerHTML = `<p style="color:red; font-style: oblique">Chưa diền population</p>`;
+            return;
+        }
+        if(document.getElementById("gpa").value === ""){
+            document.getElementById("gpa-message").innerHTML = `<p style="color:red; font-style: oblique">Chưa diền gpa</p>`;
+            return;
+        }
+        if(document.getElementById("note-event").value === ""){
+            document.getElementById("note-message").innerHTML = `<p style="color:red; font-style: oblique">Chưa diền note</p>`;
+            return;
+        }
+        let fd = new FormData();
+        fd.append("city", document.getElementById("name-city").value);
+        fd.append("country", document.getElementById("list-country").value);
+        fd.append("acreage", document.getElementById("acreage").value);
+        fd.append("population", document.getElementById("population").value);
+        fd.append("GPA", document.getElementById("gpa").value);
+        fd.append("note", document.getElementById("note-event").value);
+        $.ajax({
+            url: '/upload',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+                console.log(data);
+                search();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log(jqXhr)
+            }
+        });
+        console.log("update")
+    }
+
+    function setValue(id, name, country, acreage, population, GPA, note) {
+        document.getElementById("id_event").value = id;
+        document.getElementById("name_city").value = name;
+        document.getElementById("list_country").value = country;
+        document.getElementById("acreageS").value = acreage;
+        document.getElementById("populationS").value = population;
+        document.getElementById("gpaS").value = GPA;
+        document.getElementById("note-eventS").value = note;
+    }
+
+    function edit() {
+        let fd = new FormData();
+        fd.append("id", document.getElementById("id_event").value);
+        fd.append("city", document.getElementById("name_city").value);
+        fd.append("country", document.getElementById("list_country").value);
+        fd.append("acreage", document.getElementById("acreageS").value);
+        fd.append("population", document.getElementById("populationS").value);
+        fd.append("GPA", document.getElementById("gpaS").value);
+        fd.append("note", document.getElementById("note-eventS").value);
+        $.ajax({
+            url: '/edit',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+                console.log(data);
+                search();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log(jqXhr)
+            }
+        });
+        console.log("edit")
+    }
+
+    function remove(id) {
+        const data = new FormData();
+        data.append("id", id);
+        $.ajax({
+            url: '/delete',
+            data: data,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+                console.log(data);
+                search();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log(jqXhr)
+            }
+        })
+    }
+</script>
+</html>
